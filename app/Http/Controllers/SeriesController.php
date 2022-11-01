@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Serie;
 use App\Http\Requests\SeriesRequest;
+use App\Models\Episode;
+use App\Models\Season;
 use Illuminate\Http\Request;
 
 class SeriesController extends Controller
@@ -24,10 +26,35 @@ class SeriesController extends Controller
 
     public function store(SeriesRequest $request)
     {
-        $series = Serie::create($request->all());
+        $serie = Serie::create($request->all());
+
+        $seasons = [];
+        for ($i = 1; $i <= $request->seasonsQtd; $i++) {
+            $seasons[] = [
+                'series_id' => $serie->id,
+                'numero' => $i
+            ];
+        }
+
+        Season::insert($seasons);
+
+        dd($serie);
+
+        $episodes = [];
+        foreach ($serie->seasons as $season) {
+            for ($j = 1; $j <= $request->episodesPerSeason; $j++) {
+                $seasons[] = [
+                    'season_id' => $season->id,
+                    'numero' => $j
+                ];
+            }
+        }
+
+        Episode::insert($episodes);
+
         return redirect()
             ->route('series.index')
-            ->with('msg.sucesso', "Série '{$series->nome}' adicionada com sucesso");
+            ->with('msg.sucesso', "Série '{$serie->nome}' adicionada com sucesso");
     }
 
     public function destroy(Serie $series)
