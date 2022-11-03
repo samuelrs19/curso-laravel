@@ -38,8 +38,6 @@ class SeriesController extends Controller
 
         Season::insert($seasons);
 
-        dd($serie);
-
         $episodes = [];
         foreach ($serie->seasons as $season) {
             for ($j = 1; $j <= $request->episodesPerSeason; $j++) {
