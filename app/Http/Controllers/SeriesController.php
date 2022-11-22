@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Serie;
+use App\Models\Series;
 use App\Http\Requests\SeriesRequest;
 use App\Models\Episode;
 use App\Models\Season;
@@ -12,7 +12,7 @@ class SeriesController extends Controller
 {
     public function index()
     {
-        $series = Serie::all();
+        $series = Series::all();
         $msgSucesso = session('msg.sucesso');
 
         return view('series.index')
@@ -26,13 +26,13 @@ class SeriesController extends Controller
 
     public function store(SeriesRequest $request)
     {
-        $serie = Serie::create($request->all());
+        $serie = Series::create($request->all());
 
         $seasons = [];
         for ($i = 1; $i <= $request->seasonsQtd; $i++) {
             $seasons[] = [
                 'series_id' => $serie->id,
-                'numero' => $i
+                'number' => $i
             ];
         }
 
@@ -41,9 +41,9 @@ class SeriesController extends Controller
         $episodes = [];
         foreach ($serie->seasons as $season) {
             for ($j = 1; $j <= $request->episodesPerSeason; $j++) {
-                $seasons[] = [
+                $episodes[] = [
                     'season_id' => $season->id,
-                    'numero' => $j
+                    'number' => $j
                 ];
             }
         }
@@ -55,7 +55,7 @@ class SeriesController extends Controller
             ->with('msg.sucesso', "Série '{$serie->nome}' adicionada com sucesso");
     }
 
-    public function destroy(Serie $series)
+    public function destroy(Series $series)
     {
         $series->delete();
         return redirect()
@@ -63,12 +63,12 @@ class SeriesController extends Controller
             ->with('msg.sucesso', "Série '{$series->nome}' removida com sucesso");
     }
 
-    public function edit(Serie $series)
+    public function edit(Series $series)
     {
         return view('series.edit')->with('serie', $series);
     }
 
-    public function update(Serie $series, SeriesRequest $request)
+    public function update(Series $series, SeriesRequest $request)
     {
         $series->fill($request->all());
         $series->save();
